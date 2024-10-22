@@ -81,11 +81,11 @@ export const signup = catchAsync(async (req, res, next) => {
 });
 
 export const login = catchAsync(async (req, res, next) => {
-  const { dni, password } = req.body;
+  const { codigo, password } = req.body;
 
   const user = await User.findOne({
     where: {
-      dni,
+      codigo,
       status: 'active',
     },
   });
