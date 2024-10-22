@@ -13,6 +13,7 @@ import { usersRouter } from './src/user/user.routes.js';
 import { materialRouter } from './src/materiales/material.routes.js';
 import { pedidoRouter } from './src/pedidos/pedido.routes.js';
 import { contadorRouter } from './src/contadores/contador.routes.js';
+import { listaPedidoRouter } from './src/listaPedidos/listaPedido.routes.js';
 
 const app = express();
 
@@ -41,6 +42,7 @@ app.use('/api/v1/user', usersRouter);
 app.use('/api/v1/material', materialRouter);
 app.use('/api/v1/pedido', pedidoRouter);
 app.use('/api/v1/contador', contadorRouter);
+app.use('/api/v1/lista-pedido', listaPedidoRouter);
 
 app.all('*', (req, res, next) => {
   return next(

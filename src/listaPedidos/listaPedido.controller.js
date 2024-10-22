@@ -1,6 +1,5 @@
 import { catchAsync } from '../../utils/catchAsync.js';
-import { Proveedor } from '../proveedor/proveedor.model.js';
-import { Pedido } from './listaPedido.model.js';
+import { Pedido } from '../pedidos/pedido.model.js';
 
 export const findAll = catchAsync(async (req, res, next) => {
   const pedidos = await Pedido.findAll({
@@ -43,22 +42,17 @@ export const create = catchAsync(async (req, res, next) => {
 });
 
 export const update = catchAsync(async (req, res) => {
-  const { pedido } = req;
-  const { fecha, num_pedido, actividad, codigo, operario, num_vale } = req.body;
+  const { listaPedido } = req;
+  const { cantidad } = req.body;
 
-  await pedido.update({
-    fecha,
-    num_pedido,
-    actividad,
-    codigo,
-    operario,
-    num_vale,
+  await listaPedido.update({
+    cantidad,
   });
 
   return res.status(200).json({
     status: 'success',
-    message: 'pedido information has been updated',
-    pedido,
+    message: 'listaPedido information has been updated',
+    listaPedido,
   });
 });
 

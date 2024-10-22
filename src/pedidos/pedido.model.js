@@ -31,7 +31,7 @@ const Pedido = db.define('pedidos', {
     unique: true,
   },
   estado: {
-    type: DataTypes.ENUM('pendiente', 'despachado', 'anulado'),
+    type: DataTypes.ENUM('pendiente', 'despachado', 'anulado', 'devolucion'),
     allowNull: false,
     defaultValue: 'pendiente',
   },

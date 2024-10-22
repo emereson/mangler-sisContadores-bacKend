@@ -3,11 +3,17 @@ import { User } from './user.model.js';
 import { catchAsync } from '../../utils/catchAsync.js';
 import { AppError } from '../../utils/AppError.js';
 import { generateJWT } from '../../utils/jwt.js';
+import { Op } from 'sequelize';
 
 export const findAll = catchAsync(async (req, res, next) => {
+  const { search } = req.query;
   const users = await User.findAll({
     where: {
       status: 'active',
+      [Op.or]: [
+        { nombre: { [Op.like]: `%${search}%` } },
+        { codigo: { [Op.like]: `%${search}%` } },
+      ],
     },
   });
 
@@ -21,7 +27,7 @@ export const findAll = catchAsync(async (req, res, next) => {
 export const findAllOperarios = catchAsync(async (req, res, next) => {
   const users = await User.findAll({
     where: {
-      role: 'contador',
+      role: 'Brigada',
     },
   });
 
@@ -108,10 +114,31 @@ export const login = catchAsync(async (req, res, next) => {
 });
 
 export const update = catchAsync(async (req, res) => {
-  const { name, email } = req.body;
+  const { codigo, nombre, apellidos, dni, celular, password, role, status } =
+    req.body;
   const { user } = req;
-
-  await user.update({ name, email });
+  if (password.length > 3) {
+    await user.update({
+      codigo,
+      nombre,
+      apellidos,
+      dni,
+      celular,
+      password,
+      role,
+      status,
+    });
+  } else {
+    await user.update({
+      codigo,
+      nombre,
+      apellidos,
+      dni,
+      celular,
+      role,
+      status,
+    });
+  }
 
   return res.status(200).json({
     status: 'success',

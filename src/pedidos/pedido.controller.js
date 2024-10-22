@@ -10,9 +10,51 @@ import { Clac } from '../clac/clac.model.js';
 export const findAll = catchAsync(async (req, res, next) => {
   const { fecha, fecha_inicio, fecha_final } = req.query;
 
-  let whereFilter = {};
+  let whereFilter = {
+    estado: {
+      [Op.not]: 'devolucion',
+    },
+  };
 
-  // Verifica si fecha está presente y añade la propiedad al objeto
+  if (fecha) {
+    whereFilter.fecha = fecha;
+  }
+
+  if (fecha_inicio && fecha_final) {
+    whereFilter.fecha = {
+      [Op.between]: [fecha_inicio, fecha_final],
+    };
+  }
+  // Usa la sintaxis correcta para findAll
+  const pedidos = await Pedido.findAll({
+    where: whereFilter,
+    include: [
+      { model: User },
+      { model: Contador },
+      { model: Clac },
+      {
+        model: ListaPedido,
+        include: [{ model: Material }],
+      },
+    ],
+
+    order: [['id', 'DESC']],
+  });
+
+  return res.status(200).json({
+    status: 'Success',
+    results: pedidos.length,
+    pedidos,
+  });
+});
+
+export const findAllDevolucion = catchAsync(async (req, res, next) => {
+  const { fecha, fecha_inicio, fecha_final } = req.query;
+
+  let whereFilter = {
+    estado: 'devolucion',
+  };
+
   if (fecha) {
     whereFilter.fecha = fecha;
   }
@@ -85,6 +127,37 @@ export const create = catchAsync(async (req, res, next) => {
   });
 });
 
+export const createDevolucion = catchAsync(async (req, res, next) => {
+  const { fecha, supervisor, operario_id, lista_materiales } = req.body;
+
+  const lastVale = await Pedido.max('num_vale');
+  const num_vale = lastVale ? lastVale + 1 : 1; // Si no hay, empieza desde 1
+
+  const pedido = await Pedido.create({
+    fecha,
+    supervisor,
+    operario_id,
+    num_vale,
+    estado: 'devolucion',
+  });
+
+  const materialesPromises = lista_materiales.map(async (material) => {
+    return await ListaPedido.create({
+      pedido_id: pedido.id,
+      material_id: material.id_material,
+      cantidad: material.cantidad,
+    });
+  });
+
+  await Promise.all(materialesPromises); // Esperar a que se resuelvan todas las promesas
+
+  res.status(201).json({
+    status: 'success',
+    message: 'El pedido ha sido creado exitosamente!',
+    pedido,
+    lista_materiales, // Incluir lista_materiales en la respuesta
+  });
+});
 export const update = catchAsync(async (req, res) => {
   const { pedido } = req;
   const { fecha, num_pedido, actividad, codigo, operario, num_vale } = req.body;

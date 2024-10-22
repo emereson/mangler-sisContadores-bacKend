@@ -1,19 +1,28 @@
 import express from 'express';
 
-import * as pedidoMiddleware from './listaPedido.middleware.js';
-import * as pedidoController from './listaPedido.controller.js';
+import * as listaPedidoMiddleware from './listaPedido.middleware.js';
+import * as listaPedidoController from './listaPedido.controller.js';
 
 const router = express.Router();
 
-router.get('/', pedidoController.findAll);
-router.post('/', pedidoController.create);
+router.get('/', listaPedidoController.findAll);
+router.post('/', listaPedidoController.create);
 
 router
   .route('/:id')
-  .get(pedidoMiddleware.validExistPedido, pedidoController.findOne)
-  .patch(pedidoMiddleware.validExistPedido, pedidoController.update)
-  .delete(pedidoMiddleware.validExistPedido, pedidoController.deleteElement);
+  .get(
+    listaPedidoMiddleware.validExistListaPedido,
+    listaPedidoController.findOne
+  )
+  .patch(
+    listaPedidoMiddleware.validExistListaPedido,
+    listaPedidoController.update
+  )
+  .delete(
+    listaPedidoMiddleware.validExistListaPedido,
+    listaPedidoController.deleteElement
+  );
 
-const pedidoRouter = router;
+const listaPedidoRouter = router;
 
-export { pedidoRouter };
+export { listaPedidoRouter };

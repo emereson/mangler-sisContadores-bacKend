@@ -2,7 +2,9 @@ import { catchAsync } from '../../utils/catchAsync.js';
 import { Material } from './material.model.js';
 
 export const findAll = catchAsync(async (req, res, next) => {
-  const materiales = await Material.findAll();
+  const materiales = await Material.findAll({
+    order: [['ubicacion', 'ASC']], // Ordenar por 'ubicacion' en orden ascendente (ASC)
+  });
 
   return res.status(200).json({
     status: 'Success',

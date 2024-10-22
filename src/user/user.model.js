@@ -10,6 +10,7 @@ const User = db.define('users', {
   },
   codigo: {
     type: DataTypes.STRING,
+    unique: true,
     allowNull: true,
   },
   nombre: {
@@ -36,9 +37,9 @@ const User = db.define('users', {
     allowNull: false,
   },
   role: {
-    type: DataTypes.ENUM('admin', 'almacen', 'contador', 'capataz'),
+    type: DataTypes.ENUM('Administrador', 'Brigada', 'Capataz', 'Almacén'),
     allowNull: false,
-    defaultValue: 'admin',
+    defaultValue: 'Administrador',
   },
   status: {
     type: DataTypes.ENUM('active', 'disabled'),
